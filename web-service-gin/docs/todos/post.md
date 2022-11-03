@@ -13,7 +13,7 @@ Provide label of Todo to be created.
 ```json
 {
   "label": "[unicode 64 chars max]",
-  "priority": 0 | 1 | 2 "integer denoting (LOW | MEDIUM | HIGH)"
+  "priority": "one of: 0 | 1 | 2 (integer denoting LOW | MEDIUM | HIGH)"
 }
 ```
 
@@ -21,11 +21,12 @@ Provide label of Todo to be created.
 
 ```json
 {
-  "label": "build API"
+  "label": "build API",
+  "priority": 2
 }
 ```
 
-**Copyable example**
+**`curl` copypasta**:
 
 ```sh
 $ curl http://localhost:8080/todos \

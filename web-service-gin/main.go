@@ -26,7 +26,7 @@ type todo struct {
 }
 
 var todos = []todo{
-	{ID: shortid.MustGenerate(), Label: "clean room", Completed: false, Priority: LOW},
+	{ID: "-testing-", Label: "clean room", Completed: false, Priority: LOW},
 	{ID: shortid.MustGenerate(), Label: "exercise", Completed: false, Priority: MEDIUM},
 	{ID: shortid.MustGenerate(), Label: "learn Go", Completed: true, Priority: HIGH},
 }

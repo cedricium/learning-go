@@ -11,6 +11,12 @@ server.
 
 **Data**: `{}`
 
+**`curl` copypasta**:
+
+```sh
+$ curl http://localhost:8080/todos/-testing-
+```
+
 ## Success Responses
 
 **Condition**: If Todo exists.
@@ -21,10 +27,10 @@ server.
 
 ```json
 {
-  "id": "rWM8Rkv4Rm",
-  "label": "learn Go",
-  "completed": true,
-  "priority": 2
+  "id": "-testing-",
+  "label": "clean room",
+  "completed": false,
+  "priority": 0
 }
 ```
 

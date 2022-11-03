@@ -1,4 +1,4 @@
-# Show Accessible Accounts
+# Get All Todos
 
 Fetches all todos currently held in-memory.
 
@@ -7,6 +7,12 @@ Fetches all todos currently held in-memory.
 **Method**: `GET`
 
 **Data constraints**: `{}`
+
+**`curl` copypasta**:
+
+```sh
+$ curl http://localhost:8080/todos
+```
 
 ## Success Responses
 
