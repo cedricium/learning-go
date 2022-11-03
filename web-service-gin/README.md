@@ -1,6 +1,6 @@
 # web-service-gin
 
-Simple RESTful API powered by the popular HTTP framework, @gin-gonic/gin.
+Simple RESTful API powered by the popular HTTP framework, [Gin](https://github.com/gin-gonic/gin).
 
 ## Endpoints
 
