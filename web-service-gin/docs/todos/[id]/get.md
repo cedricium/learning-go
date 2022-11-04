@@ -14,7 +14,7 @@ server.
 **`curl` copypasta**:
 
 ```sh
-$ curl http://localhost:8080/todos/-testing-
+curl http://localhost:8080/todos/-testing-
 ```
 
 ## Success Responses

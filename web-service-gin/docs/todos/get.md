@@ -11,7 +11,7 @@ Fetches all todos currently held in-memory.
 **`curl` copypasta**:
 
 ```sh
-$ curl http://localhost:8080/todos
+curl http://localhost:8080/todos
 ```
 
 ## Success Responses

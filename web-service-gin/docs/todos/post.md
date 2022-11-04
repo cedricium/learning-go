@@ -29,7 +29,7 @@ Provide label of Todo to be created.
 **`curl` copypasta**:
 
 ```sh
-$ curl http://localhost:8080/todos \
+curl http://localhost:8080/todos \
 --include \
 --header "Content-Type: application/json" \
 --request "POST" \
