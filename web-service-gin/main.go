@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,17 +19,43 @@ const (
 /* the type definition and constant above is a workaround for declaring enums */
 /* references: https://go.dev/ref/spec#Iota */
 
-type todo struct {
+type Todo struct {
 	ID        string   `json:"id"`
 	Label     string   `json:"label" binding:"required"`
 	Completed bool     `json:"completed"`
 	Priority  priority `json:"priority" binding:"required"`
 }
 
-var todos = []todo{
+type TodoCompletedReq struct {
+	Completed *bool `json:"completed" binding:"required"`
+}
+
+var todos = []Todo{
 	{ID: "-testing-", Label: "clean room", Completed: false, Priority: LOW},
 	{ID: shortid.MustGenerate(), Label: "exercise", Completed: false, Priority: MEDIUM},
 	{ID: shortid.MustGenerate(), Label: "learn Go", Completed: true, Priority: HIGH},
+}
+
+func main() {
+	router := gin.Default()
+
+	router.GET("/ping", healthCheck)
+	router.GET("/todos", getTodos)
+	router.POST("/todos", addTodo)
+	router.GET("/todos/:id", getTodoByID)
+	router.PUT("/todos/:id", updateTodo)
+
+	router.Run()
+}
+
+func findTodoByID(id string) (*Todo, error) {
+	for index, t := range todos {
+		if t.ID == id {
+			return &todos[index], nil
+		}
+	}
+
+	return nil, errors.New("todo not found")
 }
 
 func healthCheck(c *gin.Context) {
@@ -42,7 +69,7 @@ func getTodos(c *gin.Context) {
 }
 
 func addTodo(c *gin.Context) {
-	var newTodo todo
+	var newTodo Todo
 
 	if err := c.BindJSON(&newTodo); err != nil {
 		return
@@ -57,28 +84,30 @@ func addTodo(c *gin.Context) {
 
 func getTodoByID(c *gin.Context) {
 	id := c.Param("id")
+	todo, err := findTodoByID(id)
 
-	for _, t := range todos {
-		if t.ID == id {
-			c.IndentedJSON(http.StatusOK, t)
-			return
-		}
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "todo not found"})
+		return
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "todo not found"})
+
+	c.IndentedJSON(http.StatusOK, todo)
 }
 
 func updateTodo(c *gin.Context) {
-	/* TODO */
-}
+	id := c.Param("id")
+	todo, err := findTodoByID(id)
 
-func main() {
-	router := gin.Default()
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "todo not found"})
+		return
+	}
 
-	router.GET("/ping", healthCheck)
-	router.GET("/todos", getTodos)
-	router.POST("/todos", addTodo)
-	router.GET("/todos/:id", getTodoByID)
-	router.PUT("/todos/:id", updateTodo)
+	var body TodoCompletedReq
+	if err := c.BindJSON(&body); err != nil {
+		return
+	}
 
-	router.Run("localhost:8080")
+	todo.Completed = *body.Completed
+	c.IndentedJSON(http.StatusOK, todo)
 }
