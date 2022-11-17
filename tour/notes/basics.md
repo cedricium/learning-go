@@ -135,7 +135,7 @@ var k = 3.14
 func main() {
   var c, python, java = true, false, "no!"
   fmt.Println(i, j, k, c, python, java)                     // 1 2 3.14 true false no!
-  fmt.Printf("%T %T %T %T %T %T", i, j, k, c, python, java) // int int bool bool string
+  fmt.Printf("%T %T %T %T %T %T", i, j, k, c, python, java) // int int float64 bool bool string
 }
 ```
 
