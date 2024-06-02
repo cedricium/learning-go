@@ -100,13 +100,4 @@ func main() {
 		fmt.Println(string(rune(row)+65), grid[row]) // uses characters for row
 		// fmt.Printf("%c %v   %c %v\n", row+65, grid[row], row+65, grid[row]) // uses characters for row
 	}
-
-	// fmt.Println(coordinates("A:0"))  // 0, 0, nil
-	// fmt.Println(coordinates("J:9"))  // 9, 9, nil
-	// fmt.Println(coordinates("C:40")) // -1, -1, invalid shot length
-	// fmt.Println(coordinates("C-4"))  // -1, -1, invalid shot format
-	// fmt.Println(coordinates(":12"))  // -1, -1, invalid shot format
-	// fmt.Println(coordinates("AA:"))  // -1, -1, invalid shot format
-	// fmt.Println(coordinates("Z:4"))  // -1, -1, show row out of range
-	// fmt.Println(coordinates("C:Z"))  // -1, -1, strconv.Atoi: parsing "Z": invalid syntax
 }
