@@ -31,6 +31,10 @@ import (
 )
 
 const (
+	errShotFormat string = "invalid shot format"
+	errShotRow    string = "invalid shot row, must be letter (A-Z)"
+	errShotCol    string = "invalid shot col, must be number (0-9)"
+
 	shotHit  string = "x"
 	shotMiss string = "."
 )
@@ -58,17 +62,17 @@ type Coordinate struct {
 // corresponding row and column indices for the given shot.
 func coordinates(shot string) (*Coordinate, error) {
 	if len(shot) != 2 {
-		return nil, errors.New("invalid shot format")
+		return nil, errors.New(errShotFormat)
 	}
 
 	runes := bytes.Runes([]byte(strings.ToUpper(shot)))
 	if !unicode.IsLetter(runes[0]) {
-		return nil, errors.New("invalid shot row, must be letter (a-z, A-Z)")
+		return nil, errors.New(errShotRow)
 	}
 	row := runes[0] - 65
 
 	if !unicode.IsNumber(runes[1]) {
-		return nil, errors.New("invalid shot col, must be number (0-9)")
+		return nil, errors.New(errShotCol)
 	}
 	col, _ := strconv.Atoi(string(shot[1]))
 
@@ -77,11 +81,11 @@ func coordinates(shot string) (*Coordinate, error) {
 
 func main() {
 	// === simulating placing fleet ===
-	grid[9][3], grid[9][4] = "▪️", "▪️"                                                       // patrol boat
-	grid[1][1], grid[2][1], grid[3][1] = "▪️", "▪️", "▪️"                                     // submarine
-	grid[4][7], grid[4][8], grid[4][9] = "▪️", "▪️", "▪️"                                     // destroyer
-	grid[5][2], grid[6][2], grid[7][2], grid[8][2] = "▪️", "▪️", "▪️", "▪️"                   // battleship
-	grid[0][5], grid[1][5], grid[2][5], grid[3][5], grid[4][5] = "▪️", "▪️", "▪️", "▪️", "▪️" // carrier
+	grid[9][3], grid[9][4] = "■", "■"                                                    // patrol boat
+	grid[1][1], grid[2][1], grid[3][1] = "■", "■", "■"                                   // submarine
+	grid[4][7], grid[4][8], grid[4][9] = "■", "■", "■"                                   // destroyer
+	grid[5][2], grid[6][2], grid[7][2], grid[8][2] = "■", "■", "■", "■"                  // battleship
+	grid[0][5], grid[1][5], grid[2][5], grid[3][5], grid[4][5] = "■", "■", "■", "■", "■" // carrier
 
 	// === simulating attacks ===
 	coord, _ := coordinates("H8")
@@ -93,7 +97,6 @@ func main() {
 	fmt.Println("   0 1 2 3 4 5 6 7 8 9")
 	// fmt.Println("   0 1 2 3 4 5 6 7 8 9      0 1 2 3 4 5 6 7 8 9")
 	for row := range grid {
-		// fmt.Println(row, grid[row])                  // DEBUG - uses index for row
 		fmt.Println(string(rune(row)+65), grid[row]) // uses characters for row
 		// fmt.Printf("%c %v   %c %v\n", row+65, grid[row], row+65, grid[row]) // uses characters for row
 	}

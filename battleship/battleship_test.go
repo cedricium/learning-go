@@ -16,12 +16,12 @@ func TestCoordinates(t *testing.T) {
 		{"J9", &Coordinate{9, 9}, ""},
 		{"D3", &Coordinate{3, 3}, ""},
 		{"b7", &Coordinate{1, 7}, ""},
-		{"C40", nil, "invalid shot format"},
-		{"C-4", nil, "invalid shot format"},
-		{"12", nil, "invalid shot row, must be letter (a-z, A-Z)"},
-		{"AA", nil, "invalid shot col, must be number (0-9)"},
-		{"💤4", nil, "invalid shot format"},
-		{"A💯", nil, "invalid shot format"},
+		{"C40", nil, errShotFormat},
+		{"C-4", nil, errShotFormat},
+		{"12", nil, errShotRow},
+		{"AA", nil, errShotCol},
+		{"💤4", nil, errShotFormat},
+		{"A💯", nil, errShotFormat},
 	}
 
 	for _, tt := range tests {
