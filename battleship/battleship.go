@@ -22,10 +22,12 @@ Roughly following the Hasbro "Battleship" (2002) rules: https://www.hasbro.com/c
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -46,36 +48,31 @@ var grid [][]string = [][]string{
 	{" ", " ", " ", " ", " ", " ", " ", " ", " ", " "},
 }
 
+type Coordinate struct {
+	Row int
+	Col int
+}
+
 // Coordinates decodes a shot string in the expected alphanumeric form
-// `<char>:<num>` (<char> A-J row, <num> 0-9 column), and returns the
-// corresponding row and column indices for the given shot. Errors are
-// returned if the shot format is not the correct length, is an invalid
-// format, or the shot falls outside of the specified row/col ranges.
-func coordinates(shot string) (int8, int8, error) {
-	if len(shot) != 3 {
-		return -1, -1, errors.New("invalid shot length")
+// `<char><num>` (<char> A-J row, <num> 0-9 column) and returns the
+// corresponding row and column indices for the given shot.
+func coordinates(shot string) (*Coordinate, error) {
+	if len(shot) != 2 {
+		return nil, errors.New("invalid shot format")
 	}
 
-	if !strings.Contains(shot, ":") {
-		return -1, -1, errors.New("invalid shot format")
+	runes := bytes.Runes([]byte(strings.ToUpper(shot)))
+	if !unicode.IsLetter(runes[0]) {
+		return nil, errors.New("invalid shot row, must be letter (a-z, A-Z)")
 	}
-	coords := strings.Split(shot, ":")
-	if len(coords) != 2 || len(coords[0]) == 0 || len(coords[1]) == 0 {
-		return -1, -1, errors.New("invalid shot format")
-	}
+	row := runes[0] - 65
 
-	char := strings.ToUpper(coords[0])
-	if char[0] < 65 || char[0] > 74 {
-		return -1, -1, errors.New("shot row out of range")
+	if !unicode.IsNumber(runes[1]) {
+		return nil, errors.New("invalid shot col, must be number (0-9)")
 	}
-	row := rune(char[0]) - 65
+	col, _ := strconv.Atoi(string(shot[1]))
 
-	col, err := strconv.Atoi(coords[1])
-	if err != nil {
-		return -1, -1, err
-	}
-
-	return int8(row), int8(col), nil
+	return &Coordinate{int(row), col}, nil
 }
 
 func main() {
@@ -87,10 +84,10 @@ func main() {
 	grid[0][5], grid[1][5], grid[2][5], grid[3][5], grid[4][5] = "▪️", "▪️", "▪️", "▪️", "▪️" // carrier
 
 	// === simulating attacks ===
-	r, c, _ := coordinates("H:8")
-	grid[r][c] = shotMiss // shot (miss): H:8 —> grid[7][8]
-	r, c, _ = coordinates("J:4")
-	grid[r][c] = shotHit // shot (hit): J:5 —> grid[9][4]
+	coord, _ := coordinates("H8")
+	grid[coord.Row][coord.Col] = shotMiss // shot (miss): H:8 —> grid[7][8]
+	coord, _ = coordinates("J4")
+	grid[coord.Row][coord.Col] = shotHit // shot (hit): J:5 —> grid[9][4]
 
 	// === displaying grid with fleet and shots ===
 	fmt.Println("   0 1 2 3 4 5 6 7 8 9")
