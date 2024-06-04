@@ -1,8 +1,9 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
-	"sort"
+	"slices"
 )
 
 type Team struct {
@@ -11,9 +12,10 @@ type Team struct {
 }
 
 type League struct {
-	Name  string
-	Teams map[string]Team
-	Wins  map[string]int
+	Name   string
+	Teams  map[string]Team
+	Wins   map[string]int
+	Points map[string]int
 }
 
 func (l *League) MatchResult(a string, as int, h string, hs int) {
@@ -31,6 +33,8 @@ func (l *League) MatchResult(a string, as int, h string, hs int) {
 	} else if hs > as {
 		l.Wins[h]++
 	}
+	l.Points[a] += as
+	l.Points[h] += hs
 }
 
 func (l *League) Ranking() []string {
@@ -43,8 +47,17 @@ func (l *League) Ranking() []string {
 	}
 
 	// sort teams using same team keys, comparing against l.Wins
-	sort.Slice(teams, func(i, j int) bool {
-		return l.Wins[teams[i]] > l.Wins[teams[j]]
+	// sort.Slice(teams, func(i, j int) bool {
+	// 	return l.Wins[teams[i]] > l.Wins[teams[j]]
+	// })
+
+	// improved sorted ranking: wins first, team points second, and last by name
+	slices.SortFunc(teams, func(i, j string) int {
+		return cmp.Or(
+			cmp.Compare(l.Wins[j], l.Wins[i]),
+			cmp.Compare(l.Points[j], l.Points[i]),
+			cmp.Compare(l.Teams[j].Name, l.Teams[i].Name),
+		)
 	})
 	return teams
 }
@@ -59,7 +72,8 @@ func main() {
 			"Rams":      {Name: "LA Rams", Players: []string{"Puka Nacua"}},
 			"Seahawks":  {Name: "SEA Seahawks", Players: []string{"DK Metcalf"}},
 		},
-		Wins: map[string]int{},
+		Wins:   map[string]int{},
+		Points: map[string]int{},
 	}
 
 	nfl.MatchResult("49ers", 7, "Seahawks", 21)
@@ -72,6 +86,8 @@ func main() {
 	nfl.MatchResult("49ers", 14, "Rams", 3)
 	nfl.MatchResult("Rams", 14, "Jets", 3)
 
+	fmt.Println(nfl.Points)    // map[49ers:56 Cardinals:44 Jets:27 Rams:62 Seahawks:66]
 	fmt.Println(nfl.Wins)      // map[49ers:2 Cardinals:1 Jets:1 Rams:2 Seahawks:3]
-	fmt.Println(nfl.Ranking()) // [Seahawks 49ers Rams Cardinals Jets] - ties (SF, LA) are random
+	fmt.Println(nfl.Ranking()) // [Seahawks Rams 49ers Cardinals Jets] - Wins > Points > Name
+	// fmt.Println(nfl.Ranking()) // [Seahawks 49ers Rams Cardinals Jets] - ties (SF, LA) are random
 }
