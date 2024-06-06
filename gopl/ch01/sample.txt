@@ -1,0 +1,14 @@
+abc
+hello
+goodbye
+hello
+world
+abc
+efg
+abc
+hello
+good
+bye
+world
+abc
+test
