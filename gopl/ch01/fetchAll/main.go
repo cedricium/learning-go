@@ -4,19 +4,21 @@ It can either accept a list of URLs as args or a file containing URLs.
 
 Usage:
 
-	fetchAll [URL…] [options]
+	fetchAll URL[…] [options]
 	fetchAll --file FILE [options]
+
+Arguments:
+
+	URL[…]
+		List of URLs to process, separated by a space
 
 Options:
 
-	URL…
-		List of URLs to process, separated by a space.
-
 	-f, --file FILE
-		Read URLs from FILE, one per line.
+		the file containing URLs (one per line) to process
 
 	-o, --output FILE
-		Output file. Defaults to stdout if not provided.
+		the file to save output to, default stdout
 
 Examples:
 
@@ -36,7 +38,34 @@ import (
 	"time"
 )
 
-const KiB = 1024.0
+const (
+	kib   float64 = 1024.0
+	usage string  = `fetchAll - fetches URLs in parallel and reports their times and sizes
+
+Usage:
+
+	fetchAll URL[…] [options]
+	fetchAll --file FILE [options]
+
+Arguments:
+
+	URL[…]
+		List of URLs to process, separated by a space
+
+Options:
+
+	-f, --file FILE
+		the file containing URLs (one per line) to process
+
+	-o, --output FILE
+		the file to save output to, default stdout
+
+Examples:
+
+	$ ./fetchAll https://google.com example.com gopl.io
+	$ ./fetchAll -f alexa-top-1000.txt -o results.txt
+`
+)
 
 var flagInputFile string
 var flagOutputFile string
@@ -51,6 +80,11 @@ func init() {
 	flag.StringVar(&flagInputFile, "f", defaultFile, usageFile+" (shorthand)")
 	flag.StringVar(&flagOutputFile, "output", defaultFile, usageOutput)
 	flag.StringVar(&flagOutputFile, "o", defaultFile, usageOutput+" (shorthand)")
+
+	flag.Usage = func() {
+		fmt.Fprint(flag.CommandLine.Output(), usage)
+		os.Exit(1)
+	}
 }
 
 func main() {
@@ -115,5 +149,5 @@ func fetch(url string, ch chan<- string) {
 		return
 	}
 	secs := time.Since(start).Seconds()
-	ch <- fmt.Sprintf("%5.2fs\t%8.2FKiB\t%s", secs, float64(written)/KiB, url)
+	ch <- fmt.Sprintf("%5.2fs\t%8.2FKiB\t%s", secs, float64(written)/kib, url)
 }
